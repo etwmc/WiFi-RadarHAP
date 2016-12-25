@@ -1,16 +1,16 @@
 #WiFi Radar - HomeKit edition<br>
 WiFi Radar is a new project based on my HomeKit Accessory Protocol implementaiton (more on that later), which solved the age old question: how to let your smart home know everyone in your family is out, so it can do whatever you want, let it be turn off the lights, turn on the security, or turn off gas valves. <br>
 #Setup<br>
-To setup Wi-Fi Radar, there is 3 easy parts:<br>
+To setup Wi-Fi Radar, there is 3 easy parts:
 1. Configurate the system<br>
 There is essentially 3 constant in Configuration.h<br>
-    i. deviceIdentity<br>
-        It is the identification of the program, and your iPhone/iPad will use it to see if it should connect to the program<br>
+  1. deviceIdentity<br>
+    It is the identification of the program, and your iPhone/iPad will use it to see if it should connect to the program<br>
         It has six values, which having two hex value<br>
         #Or to be easy, just replace every character beside the colon with a random one, from 0-9, and captial A-F<br>
-    ii. controllerRecordsAddress<br>
+  2. controllerRecordsAddress<br>
         It is the location to store the key, so your phone can talk to the program securely and thieves can't know when your house is empty<br>
-    iii. keepAlivePeriod<br>
+  3. keepAlivePeriod<br>
         How long do you want the system check if your home is in the network, in seconds <br>
         WARNING: do not, I repeat, do not send it in a short period like 10 (represent 10 seconds). Due to the design of TCP, your phone would still have a long time before declared missing, and using a short period will just spend lots of your phone's power, as it would need to wake up and read the message. However, because it is handled by a small program inside iOS (homed), you won't see it being listed as a separate process, but your phone could be drain in 7 hours of standby. <br>
         If you want a shorter respond time, consider look into the TCP retry mechanism and change that variable, which I beleive best to do only if you have a standaone Linux box (This doesn't need something fancy like the RPi. An old router with OpenWRT will do. THe OpenWRT compile kit is coming. )<br>
