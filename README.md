@@ -1,41 +1,48 @@
-#WiFi Radar - HomeKit edition
-WiFi Radar is a new project based on my HomeKit Accessory Protocol implementaiton (more on that later), which solved the age old question: how to let your smart home know everyone in your family is out, so it can do whatever you want, let it be turn off the lights, turn on the security, or turn off gas valves. 
-#Setup
-To setup Wi-Fi Radar, there is 3 easy parts:
-1. Configurate the system
-There is essentially 3 constant in Configuration.h
-    i. deviceIdentity
-        It is the identification of the program, and your iPhone/iPad will use it to see if it should connect to the program
-        It has six values, which having two hex value
-        #Or to be easy, just replace every character beside the colon with a random one, from 0-9, and captial A-F
-    ii. controllerRecordsAddress
-        It is the location to store the key, so your phone can talk to the program securely and thieves can't know when your house is empty
-    iii. keepAlivePeriod
-        How long do you want the system check if your home is in the network, in seconds 
-        WARNING: do not, I repeat, do not send it in a short period like 10 (represent 10 seconds). Due to the design of TCP, your phone would still have a long time before declared missing, and using a short period will just spend lots of your phone's power, as it would need to wake up and read the message. However, because it is handled by a small program inside iOS (homed), you won't see it being listed as a separate process, but your phone could be drain in 7 hours of standby. 
-        If you want a shorter respond time, consider look into the TCP retry mechanism and change that variable, which I beleive best to do only if you have a standaone Linux box (This doesn't need something fancy like the RPi. An old router with OpenWRT will do. THe OpenWRT compile kit is coming. )
-2. Run it in a devices that would stay inside your house, and turned on 24x7. Let it be your desktop, laptop that seldom take outside the house, or OpenWRT router. Thanks to the portability of C, you can run it almost anywhere you want.  
-3. For any device you would want to track, open a third party HomeKit app (Last time I check the Home app only show what Apple defined as a normal characteristic), select the sensor, and you will see there is a switch. Turn it on and the system will start tracking its connection. As long as there is one device stay within your WiFi range, it will continuously triggered, so your lights won't suddently got turned off because someone is out.
-4. If you need to manual modify the list of device being tracked, just turn it off, add/remove the IP addresses, and restart. 
-5. Use HomeKit app to add automation. It could work both triggered and not trigger. (it means whether your home has people) For not-triggering case, you would need to use a 3rd part HomeKit app (like the one by Eve)
+#WiFi Radar - HomeKit edition<br>
+WiFi Radar is a new project based on my HomeKit Accessory Protocol implementaiton (more on that later), which solved the age old question: how to let your smart home know everyone in your family is out, so it can do whatever you want, let it be turn off the lights, turn on the security, or turn off gas valves. <br>
+#Setup<br>
+To setup Wi-Fi Radar, there is 3 easy parts:<br>
+1. Configurate the system<br>
+There is essentially 3 constant in Configuration.h<br>
+    i. deviceIdentity<br>
+        It is the identification of the program, and your iPhone/iPad will use it to see if it should connect to the program<br>
+        It has six values, which having two hex value<br>
+        #Or to be easy, just replace every character beside the colon with a random one, from 0-9, and captial A-F<br>
+    ii. controllerRecordsAddress<br>
+        It is the location to store the key, so your phone can talk to the program securely and thieves can't know when your house is empty<br>
+    iii. keepAlivePeriod<br>
+        How long do you want the system check if your home is in the network, in seconds <br>
+        WARNING: do not, I repeat, do not send it in a short period like 10 (represent 10 seconds). Due to the design of TCP, your phone would still have a long time before declared missing, and using a short period will just spend lots of your phone's power, as it would need to wake up and read the message. However, because it is handled by a small program inside iOS (homed), you won't see it being listed as a separate process, but your phone could be drain in 7 hours of standby. <br>
+        If you want a shorter respond time, consider look into the TCP retry mechanism and change that variable, which I beleive best to do only if you have a standaone Linux box (This doesn't need something fancy like the RPi. An old router with OpenWRT will do. THe OpenWRT compile kit is coming. )<br>
+2. Run it in a devices that would stay inside your house, and turned on 24x7. Let it be your desktop, laptop that seldom take outside the house, or OpenWRT router. Thanks to the portability of C, you can run it almost anywhere you want.  <br>
+3. For any device you would want to track, open a third party HomeKit app (Last time I check the Home app only show what Apple defined as a normal characteristic), select the sensor, and you will see there is a switch. Turn it on and the system will start tracking its connection. As long as there is one device stay within your WiFi range, it will continuously triggered, so your lights won't suddently got turned off because someone is out.<br>
+4. If you need to manual modify the list of device being tracked, just turn it off, add/remove the IP addresses, and restart. <br>
+5. Use HomeKit app to add automation. It could work both triggered and not trigger. (it means whether your home has people) For not-triggering case, you would need to use a 3rd part HomeKit app (like the one by Eve)<br>
 
 
-#FAQ
-1. Some time needed until the home is consider empty
-    While connecting is a fast process, in TCP, there is no mechanism to check if your device is disconnected because you are leaving/turning off WiFi/etc. In TCP, they use a try again mechanism, which it will try multiple times, in an exponential retry period, and declare it fails until all attemp fails. This will require us to send packages as a "keep alive", hence there is a keep alive package getting sent. 
-2. Not supporting any devices beside iOS
-    Unfortunatly, you can't access the connection list in your router in one API. Not just because it was started to develop before the Smart Home is a thing, because it is something you don't want to mess up. (Imageine your light bulb could shut down your network)
-    So, in order to track, I have to either get access to every router software and create a special version, or setup a TCP/IP connection to your phone. And thanks to how much HomeKit like to connect to a Wi-Fi device, it would be smart to just use that connection instead of another TCP/IP socket with a special app. 
-    Beside, if you use HomeKit, why would you use Android? 
-3. How to get my Apple Airport/Apple TV do it?
-    Maybe write some email to them? It is a small daemon, so it could be added without reducing any performance. But currently I didn't find a way to add stuff in Airport, and tvOS doesn't like long term TCP connection.
-4. Why it suddenly doesn't track
-    It's determined by your LAN IP address, so if your IP address changed, it forget it exist. So, consider reverse it as a static IP address. 
+#FAQ<br>
+1. Some time needed until the home is consider empty<br>
+    While connecting is a fast process, in TCP, there is no mechanism to check if your device is disconnected because you are leaving/turning off WiFi/etc. In TCP, they use a try again mechanism, which it will try multiple times, in an exponential retry period, and declare it fails until all attemp fails. This will require us to send packages as a "keep alive", hence there is a keep alive package getting sent. <br>
+2. Not supporting any devices beside iOS<br>
+    Unfortunatly, you can't access the connection list in your router in one API. Not just because it was started to develop before the Smart Home is a thing, because it is something you don't want to mess up. (Imageine your light bulb could shut down your network)<br>
+    So, in order to track, I have to either get access to every router software and create a special version, or setup a TCP/IP connection to your phone. And thanks to how much HomeKit like to connect to a Wi-Fi device, it would be smart to just use that connection instead of another TCP/IP socket with a special app. <br>
+    Beside, if you use HomeKit, why would you use Android? <br>
+3. How to get my Apple Airport/Apple TV do it?<br>
+    Maybe write some email to them? It is a small daemon, so it could be added without reducing any performance. But currently I didn't find a way to add stuff in Airport, and tvOS doesn't like long term TCP connection.<br>
+4. Why it suddenly doesn't track<br>
+    It's determined by your LAN IP address, so if your IP address changed, it forget it exist. So, consider reverse it as a static IP address. <br>
+<br>
+<br>
 
 
-The following is the direct readme copy from PersonalHomeKit, so I can keep the description simple
 
-#PersonalHomeKit
+--------------
+The following is the direct readme copy from PersonalHomeKit, so I can keep the description simple<br>
+<br>
+
+
+
+#PersonalHomeKit<br>
 This is a dymanic version (runtime add/remove accessories/services). For static version(MCU version), switch to the static branch
 Now support multiple characteristic, notify function
 ---------------
