@@ -31,7 +31,9 @@
  * Count how many notifiable value exist in your set
  * For dynamic add/drop model, please estimate the maximum number (Too few->Buffer overflow)
  */
-#define numberOfNotifiableValue 1
+#define numberOfNotifiableValue 2
+
+#define keepAlivePeriod 60
 
 //If you compiling this to microcontroller, set it to 1
 #define MCU 0

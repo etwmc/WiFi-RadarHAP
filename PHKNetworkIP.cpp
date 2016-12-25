@@ -79,7 +79,7 @@ void *stayAliveTrigger(void *threadInfo) {
         strncpy(aliveMsg, "{\"characteristics\": []}", 32);
         alivePackage->desc = aliveMsg;
         announce(alivePackage);
-        sleep(60);
+        sleep(keepAlivePeriod);
     }
 }
 
