@@ -1,9 +1,15 @@
 #WiFi Radar - HomeKit edition<br>
 WiFi Radar is a new project based on my HomeKit Accessory Protocol implementaiton (more on that later), which solved the age old question: how to let your smart home know everyone in your family is out, so it can do whatever you want, let it be turn off the lights, turn on the security, or turn off gas valves. <br>
 #Setup<br>
-To setup Wi-Fi Radar, there is 3 easy parts:
-1. Configurate the system<br>
-There is essentially 3 constant in Configuration.h<br>
+To setup Wi-Fi Radar, there is 3 easy parts: <br>
+1. Configurate the system and compile (make -j 8)<br>
+2. Run it in a devices that would stay inside your house, and turned on 24x7. Let it be your desktop, laptop that seldom take outside the house, or OpenWRT router. Thanks to the portability of C, you can run it almost anywhere you want.  <br>
+3. For any device you would want to track, open a third party HomeKit app (Last time I check the Home app only show what Apple defined as a normal characteristic), select the sensor, and you will see there is a switch. Turn it on and the system will start tracking its connection. As long as there is one device stay within your WiFi range, it will continuously triggered, so your lights won't suddently got turned off because someone is out.<br>
+4. If you need to manual modify the list of device being tracked, just turn it off, add/remove the IP addresses, and restart. <br>
+5. Use HomeKit app to add automation. It could work both triggered and not trigger. (it means whether your home has people) For not-triggering case, you would need to use a 3rd part HomeKit app (like the one by Eve)<br>
+
+#Things Configure the system:
+  There is essentially 3 constant in Configuration.h:
   1. deviceIdentity<br>
     It is the identification of the program, and your iPhone/iPad will use it to see if it should connect to the program<br>
         It has six values, which having two hex value<br>
@@ -14,10 +20,6 @@ There is essentially 3 constant in Configuration.h<br>
         How long do you want the system check if your home is in the network, in seconds <br>
         WARNING: do not, I repeat, do not send it in a short period like 10 (represent 10 seconds). Due to the design of TCP, your phone would still have a long time before declared missing, and using a short period will just spend lots of your phone's power, as it would need to wake up and read the message. However, because it is handled by a small program inside iOS (homed), you won't see it being listed as a separate process, but your phone could be drain in 7 hours of standby. <br>
         If you want a shorter respond time, consider look into the TCP retry mechanism and change that variable, which I beleive best to do only if you have a standaone Linux box (This doesn't need something fancy like the RPi. An old router with OpenWRT will do. THe OpenWRT compile kit is coming. )<br>
-2. Run it in a devices that would stay inside your house, and turned on 24x7. Let it be your desktop, laptop that seldom take outside the house, or OpenWRT router. Thanks to the portability of C, you can run it almost anywhere you want.  <br>
-3. For any device you would want to track, open a third party HomeKit app (Last time I check the Home app only show what Apple defined as a normal characteristic), select the sensor, and you will see there is a switch. Turn it on and the system will start tracking its connection. As long as there is one device stay within your WiFi range, it will continuously triggered, so your lights won't suddently got turned off because someone is out.<br>
-4. If you need to manual modify the list of device being tracked, just turn it off, add/remove the IP addresses, and restart. <br>
-5. Use HomeKit app to add automation. It could work both triggered and not trigger. (it means whether your home has people) For not-triggering case, you would need to use a 3rd part HomeKit app (like the one by Eve)<br>
 
 
 #FAQ<br>
